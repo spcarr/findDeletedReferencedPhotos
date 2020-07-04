@@ -1,5 +1,5 @@
 # findDeletedReferencedPhotos
-AppleScript to find photos who's referenced file is deleted. If the Photos library does not own the images, then they can be deleted without it knowing. This script finds images that are deleted and puts them into a Album.
+AppleScript to find photos in Macos Photos App library who's referenced file is deleted. If the Photos library does not own the images, then they can be deleted without it knowing. This script finds images that are deleted and puts them into a Album.
 
 1. Set nameOfAlbum to the Album who's Photo Files need to be checked.
 2. Set nameOfDeletedImageFilesAlbum to the name of the Album that should be created with a reference to the deleted images.
