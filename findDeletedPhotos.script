@@ -31,7 +31,7 @@ repeat with i from 1 to length of photosToProcess
 	
 	tell application "Photos"
 		set photo to item i of photosToProcess
-		set filePath to do shell script "find '" & referencedFilesFolderName & "' -name '" & filename of photo & "'"
+		set filePath to do shell script "find \"" & referencedFilesFolderName & "\" -name \"" & filename of photo & "\""
 		if filePath is "" then
 			copy photo to end of deletedItems
 		end if
