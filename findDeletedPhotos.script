@@ -1,6 +1,6 @@
--- Script to find all images in an album that are referencing a deleted file.
+-- Script to find all images in one or more albums that are referencing a deleted file.
 
-set nameOfAlbum to "2017"
+set listOfAlbumNamesToScan to ["2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
 set nameOfDeletedImageFilesAlbum to "Deleted Files"
 set referencedFilesFolderName to "/Users/myAccount/Google Drive/Google Photos"
 
@@ -13,52 +13,49 @@ tell application "System Events"
 	end if
 end tell
 
-set deletedItems to {}
-set photosToProcess to {}
-set totalToProcess to 0
+repeat with nameOfAlbumToScan in listOfAlbumNamesToScan
+	set deletedItems to {}
+	set photosToProcess to {}
+	set totalToProcess to 0
 
-tell application "Photos"
-	set photosToProcess to media items in container nameOfAlbum
-	set totalToProcess to count of photosToProcess
-end tell
-
-set progress description to "Processing Images..."
-set progress total steps to totalToProcess
-
-repeat with i from 1 to length of photosToProcess
-	set progress additional description to "Processing image " & i & " of " & totalToProcess
-	set progress completed steps to i
-	
 	tell application "Photos"
-		set photo to item i of photosToProcess
-		set filePath to do shell script "find \"" & referencedFilesFolderName & "\" -name \"" & filename of photo & "\""
-		if filePath is "" then
-			copy photo to end of deletedItems
-		end if
+		set photosToProcess to media items in container nameOfAlbumToScan
+		set totalToProcess to count of photosToProcess
 	end tell
-	
+
+	set progress description to "Processing Images..."
+	set progress total steps to totalToProcess
+
+	repeat with i from 1 to length of photosToProcess
+		set progress additional description to "Processing image " & i & " of " & totalToProcess
+		set progress completed steps to i
+		
+		tell application "Photos"
+			set photo to item i of photosToProcess
+			set filePath to do shell script "find \"" & referencedFilesFolderName & "\" -name \"" & filename of photo & "\""
+			if filePath is "" then
+				copy photo to end of deletedItems
+			end if
+		end tell
+	end repeat
+
+	tell application "Photos"
+		if not (exists container nameOfDeletedImageFilesAlbum) then
+			set deletedImagesAlbum to make new album named nameOfDeletedImageFilesAlbum
+		else
+			set deletedImagesAlbum to container nameOfDeletedImageFilesAlbum
+		end if
+		add deletedItems to deletedImagesAlbum
+	end tell
+
+	set progress total steps to 0
+	set progress completed steps to 0
+	set progress description to ""
+	set progress additional description to ""
 end repeat
 
 tell application "Photos"
-	
-	if not (exists container nameOfDeletedImageFilesAlbum) then
-		set deletedImagesAlbum to make new album named nameOfDeletedImageFilesAlbum
-	else
-		set deletedImagesAlbum to container nameOfDeletedImageFilesAlbum
-	end if
-	
-	add deletedItems to deletedImagesAlbum
-	
 	if photosWasAlreadyRunning is false then
 		quit
 	end if
-	
 end tell
-
-set progress total steps to 0
-set progress completed steps to 0
-set progress description to ""
-set progress additional description to ""
-
-
-
