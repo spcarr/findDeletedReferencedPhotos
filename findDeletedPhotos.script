@@ -40,12 +40,16 @@ repeat with nameOfAlbumToScan in listOfAlbumNamesToScan
 	end repeat
 
 	tell application "Photos"
-		if not (exists container nameOfDeletedImageFilesAlbum) then
-			set deletedImagesAlbum to make new album named nameOfDeletedImageFilesAlbum
+		if deletedItems is not {} then
+			if not (exists container nameOfDeletedImageFilesAlbum) then
+				set deletedImagesAlbum to make new album named nameOfDeletedImageFilesAlbum
+			else
+				set deletedImagesAlbum to container nameOfDeletedImageFilesAlbum
+			end if
+			add deletedItems to deletedImagesAlbum
 		else
-			set deletedImagesAlbum to container nameOfDeletedImageFilesAlbum
+			display notification "All files found for photos in “" & nameOfAlbumToScan & "”. No files are missing."
 		end if
-		add deletedItems to deletedImagesAlbum
 	end tell
 
 	set progress total steps to 0
